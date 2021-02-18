@@ -35,19 +35,5 @@ pipeline
         
         
     }
-    post
-        {
-            success
-            {
-                
-             sh 'scp /home/ubuntu/.jenkins/workspace/Declarativepipeline/webapp/target/webapp.war ubuntu@172.31.92.140:/var/lib/tomcat9/webapps/prod.war'   
-            }
-            failure
-            {
-               mail bcc: '', body: 'delivery fails', cc: '', from: '', replyTo: '', subject: 'unable  delevery to prodserver ', to: 'deliveryteam@gmsil.com' 
-            }
-            
-        
-            
-        }
+   
 }

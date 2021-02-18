@@ -1,0 +1,53 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('continuousdownloads')
+        {
+            steps
+            {
+               git 'https://github.com/intelliqittrainings/maven.git' 
+            }
+        }
+        stage('continuousbuild')
+        {
+            steps
+            {
+                sh 'mvn package'
+            }
+        }
+        stage('continuousdeploy')
+        {
+            steps
+            {
+                sh 'scp /home/ubuntu/.jenkins/workspace/Declarativepipeline/webapp/target/webapp.war ubuntu@172.31.89.165:/var/lib/tomcat9/webapps/qa.war'
+            }
+        }
+        stage('continuoustesting')
+        {
+            steps
+            {
+                git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
+               sh 'java -jar /home/ubuntu/.jenkins/workspace/Declarativepipeline/testing.jar' 
+            }
+        }
+        
+        
+    }
+    post
+        {
+            success
+            {
+                
+             sh 'scp /home/ubuntu/.jenkins/workspace/Declarativepipeline/webapp/target/webapp.war ubuntu@172.31.92.140:/var/lib/tomcat9/webapps/prod.war'   
+            }
+            failure
+            {
+               mail bcc: '', body: 'delivery fails', cc: '', from: '', replyTo: '', subject: 'unable  delevery to prodserver ', to: 'deliveryteam@gmsil.com' 
+            }
+            
+        
+            
+        }
+}
